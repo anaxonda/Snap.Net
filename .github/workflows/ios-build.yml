@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     name: Build iOS App
-    runs-on: macos-latest
+    runs-on: macos-12
 
     steps:
     - name: Checkout Source
@@ -23,8 +23,11 @@ jobs:
       with:
         dotnet-version: 6.0.x
 
-    - name: Add Mono to PATH
-      run: echo "/Library/Frameworks/Mono.framework/Versions/Current/Commands" >> $GITHUB_PATH
+    - name: Install Mono (Fallback)
+      run: |
+        brew update
+        brew install mono
+        echo "/usr/local/opt/mono/bin" >> $GITHUB_PATH
 
     - name: Restore NuGets
       run: msbuild -t:Restore Snap.Net.sln
