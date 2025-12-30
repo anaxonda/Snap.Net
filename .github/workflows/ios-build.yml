@@ -32,7 +32,7 @@ jobs:
 
     - name: Restore NuGets
       run: |
-        nuget restore Snap.Net.sln
+        msbuild -t:Restore Snap.Net.sln
 
     - name: Build IPA (Ad-Hoc)
       run: |
