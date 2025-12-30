@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     name: Build iOS App
-    runs-on: macos-12
+    runs-on: macos-latest
 
     steps:
     - name: Checkout Source
@@ -18,19 +18,19 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Setup Mono
+      uses: mono/setup-mono@v1
+      with:
+        mono-version: 'latest'
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.x
 
-    - name: Install Mono (Fallback)
+    - name: Restore NuGets (Classic)
       run: |
-        brew update
-        brew install mono
-        echo "/usr/local/opt/mono/bin" >> $GITHUB_PATH
-
-    - name: Restore NuGets
-      run: msbuild -t:Restore Snap.Net.sln
+        sudo nuget restore Snap.Net.sln
 
     - name: Build IPA (Ad-Hoc)
       run: |
