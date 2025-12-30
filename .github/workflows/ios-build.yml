@@ -18,24 +18,26 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Install Mono & NuGet
-      run: |
-        brew install mono nuget
-        # On ARM64 Mac, Homebrew installs to /opt/homebrew
-        echo "/opt/homebrew/bin" >> $GITHUB_PATH
-        echo "/opt/homebrew/opt/mono/bin" >> $GITHUB_PATH
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.x
 
-    - name: Restore NuGets
+    - name: Install Mono and Build
       run: |
+        brew install mono nuget
+        
+        # Add to current path for this script block
+        export PATH="/opt/homebrew/bin:$PATH"
+        export PATH="/opt/homebrew/opt/mono/bin:$PATH"
+        
+        echo "Verifying msbuild location..."
+        which msbuild || echo "msbuild not found in PATH"
+        
+        echo "Restoring Packages..."
         msbuild -t:Restore Snap.Net.sln
-
-    - name: Build IPA (Ad-Hoc)
-      run: |
+        
+        echo "Building IPA..."
         msbuild Mobile/Mobile.iOS/Snap.Net.Mobile.iOS.csproj \
           /p:Configuration=Release \
           /p:Platform=iPhone \
