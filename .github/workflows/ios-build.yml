@@ -18,27 +18,38 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Install Mono & Xamarin.iOS (Manual)
+      run: |
+        echo "Downloading Mono..."
+        curl -L -o mono.pkg https://download.visualstudio.microsoft.com/download/pr/4e6c3821-2092-4148-9777-628929e0839e/15f629731213f8b3c417c80083eb052b/MonoFramework-MDK-6.12.0.188.macos10.xamarin.universal.pkg
+        
+        echo "Downloading Xamarin.iOS..."
+        curl -L -o xamarin.ios.pkg https://download.visualstudio.microsoft.com/download/pr/0f332563-315d-4521-8862-2315b4931a7f/c665975a5e3782b60451a99df952136e/xamarin.ios-16.4.0.6.pkg
+        
+        echo "Installing Mono..."
+        sudo installer -pkg mono.pkg -target /
+        
+        echo "Installing Xamarin.iOS..."
+        sudo installer -pkg xamarin.ios.pkg -target /
+        
+        echo "Cleaning up..."
+        rm mono.pkg xamarin.ios.pkg
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.x
 
-    - name: Install Mono and Build
+    - name: Restore and Build
       run: |
-        brew install mono nuget
-        
-        # Add to current path for this script block
-        export PATH="/opt/homebrew/bin:$PATH"
-        export PATH="/opt/homebrew/opt/mono/bin:$PATH"
-        
-        echo "Verifying msbuild location..."
-        which msbuild || echo "msbuild not found in PATH"
+        # Use the official Mono msbuild location
+        MSBUILD_PATH="/Library/Frameworks/Mono.framework/Versions/Current/Commands/msbuild"
         
         echo "Restoring Packages..."
-        msbuild -t:Restore Snap.Net.sln
+        $MSBUILD_PATH -t:Restore Snap.Net.sln
         
         echo "Building IPA..."
-        msbuild Mobile/Mobile.iOS/Snap.Net.Mobile.iOS.csproj \
+        $MSBUILD_PATH Mobile/Mobile.iOS/Snap.Net.Mobile.iOS.csproj \
           /p:Configuration=Release \
           /p:Platform=iPhone \
           /p:BuildIpa=true \
