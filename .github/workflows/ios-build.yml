@@ -18,19 +18,21 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Setup Mono
-      uses: mono/setup-mono@v1
-      with:
-        mono-version: 'latest'
+    - name: Install Mono & NuGet
+      run: |
+        brew install mono nuget
+        # On ARM64 Mac, Homebrew installs to /opt/homebrew
+        echo "/opt/homebrew/bin" >> $GITHUB_PATH
+        echo "/opt/homebrew/opt/mono/bin" >> $GITHUB_PATH
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 6.0.x
 
-    - name: Restore NuGets (Classic)
+    - name: Restore NuGets
       run: |
-        sudo nuget restore Snap.Net.sln
+        nuget restore Snap.Net.sln
 
     - name: Build IPA (Ad-Hoc)
       run: |
