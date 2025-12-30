@@ -21,10 +21,10 @@ jobs:
     - name: Install Mono & Xamarin.iOS (Manual)
       run: |
         echo "Downloading Mono..."
-        curl -L -o mono.pkg https://download.visualstudio.microsoft.com/download/pr/4e6c3821-2092-4148-9777-628929e0839e/15f629731213f8b3c417c80083eb052b/MonoFramework-MDK-6.12.0.188.macos10.xamarin.universal.pkg
+        curl -L -o mono.pkg https://download.mono-project.com/archive/6.12.0/macos-10-universal/MonoFramework-MDK-6.12.0.182.macos10.xamarin.universal.pkg
         
         echo "Downloading Xamarin.iOS..."
-        curl -L -o xamarin.ios.pkg https://download.visualstudio.microsoft.com/download/pr/0f332563-315d-4521-8862-2315b4931a7f/c665975a5e3782b60451a99df952136e/xamarin.ios-16.4.0.6.pkg
+        curl -L -o xamarin.ios.pkg https://aka.ms/xvs/pkg/macios/16.4.0.23
         
         echo "Installing Mono..."
         sudo installer -pkg mono.pkg -target /
