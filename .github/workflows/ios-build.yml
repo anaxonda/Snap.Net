@@ -1,0 +1,43 @@
+name: iOS Build
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build iOS App
+    runs-on: macos-13
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Restore NuGets
+      run: msbuild -t:Restore Mobile/Mobile.iOS/Snap.Net.Mobile.iOS.csproj
+
+    - name: Build IPA (Ad-Hoc)
+      run: |
+        msbuild Mobile/Mobile.iOS/Snap.Net.Mobile.iOS.csproj \
+          /p:Configuration=Release \
+          /p:Platform=iPhone \
+          /p:BuildIpa=true \
+          /p:CodesignKey="-" \
+          /p:CodesignProvision="" \
+          /p:IpaPackageName="Snap.Net.Mobile.iOS.ipa"
+
+    - name: Upload IPA Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: SnapCast-iOS-Unsigned
+        path: Mobile/Mobile.iOS/bin/iPhone/Release/Snap.Net.Mobile.iOS.ipa
