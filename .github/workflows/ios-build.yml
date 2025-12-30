@@ -24,7 +24,7 @@ jobs:
         dotnet-version: 6.0.x
 
     - name: Restore NuGets
-      run: msbuild -t:Restore Mobile/Mobile.iOS/Snap.Net.Mobile.iOS.csproj
+      run: msbuild -t:Restore Snap.Net.sln
 
     - name: Build IPA (Ad-Hoc)
       run: |
